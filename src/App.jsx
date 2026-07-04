@@ -173,50 +173,42 @@ export default function App() {
               )}
             </div>
 
-            <ul className="space-y-3">
-              {results.map((property) => {
-                const isSelected = selected?.certificateNumber === property.certificateNumber
+            <label htmlFor="property-select" className="sr-only">
+              Choose an address
+            </label>
+            <select
+              id="property-select"
+              value={selected?.certificateNumber ?? ''}
+              disabled={certificateLoading}
+              onChange={(e) => {
+                const property = results.find((r) => r.certificateNumber === e.target.value)
+                if (property) handleSelect(property)
+              }}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 disabled:cursor-wait disabled:opacity-60"
+            >
+              <option value="" disabled>
+                Select an address…
+              </option>
+              {results.map((property) => (
+                <option key={property.certificateNumber} value={property.certificateNumber}>
+                  {formatAddress(property)} ({property.certificateNumber})
+                </option>
+              ))}
+            </select>
 
-                return (
-                  <li key={property.certificateNumber}>
-                    <button
-                      type="button"
-                      onClick={() => handleSelect(property)}
-                      disabled={certificateLoading && isSelected}
-                      className={`w-full rounded-xl border p-4 text-left transition ${
-                        isSelected
-                          ? 'border-emerald-500 bg-emerald-500/10 ring-1 ring-emerald-500/40'
-                          : 'border-slate-800 bg-slate-900/40 hover:border-slate-600 hover:bg-slate-900/70'
-                      } disabled:cursor-wait`}
-                    >
-                      <div className="flex items-start gap-4">
-                        <EnergyBand band={property.currentEnergyEfficiencyBand} />
-                        <div className="min-w-0 flex-1">
-                          <p className="font-medium leading-snug text-white">
-                            {formatAddress(property)}
-                          </p>
-                          <p className="mt-1 font-mono text-sm text-slate-400">
-                            {property.certificateNumber}
-                          </p>
-                          <p className="mt-2 text-xs text-slate-500">
-                            Registered {property.registrationDate}
-                            {property.council ? ` · ${property.council}` : ''}
-                          </p>
-                        </div>
-                        {isSelected && certificateLoading && (
-                          <span className="shrink-0 text-xs text-emerald-300">Loading…</span>
-                        )}
-                        {isSelected && !certificateLoading && certificate && (
-                          <span className="shrink-0 rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-medium text-emerald-300">
-                            Selected
-                          </span>
-                        )}
-                      </div>
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
+            {selected && (
+              <div className="mt-3 flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+                <EnergyBand band={selected.currentEnergyEfficiencyBand} />
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium leading-snug text-white">{formatAddress(selected)}</p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    Registered {selected.registrationDate}
+                    {selected.council ? ` · ${selected.council}` : ''}
+                  </p>
+                </div>
+                {certificateLoading && <span className="shrink-0 text-xs text-emerald-300">Loading…</span>}
+              </div>
+            )}
           </section>
         )}
 
