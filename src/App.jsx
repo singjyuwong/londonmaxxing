@@ -191,7 +191,7 @@ export default function App() {
               </option>
               {results.map((property) => (
                 <option key={property.certificateNumber} value={property.certificateNumber}>
-                  {formatAddress(property)} ({property.certificateNumber})
+                  {formatAddress(property)}
                 </option>
               ))}
             </select>
