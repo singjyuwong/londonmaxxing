@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { fetchCertificate, formatAddress, searchByPostcode } from './api/epc'
 import CertificateDetails from './components/CertificateDetails'
+import BillQuestionnaire from './components/BillQuestionnaire'
+import BillEstimate from './components/BillEstimate'
+import { computeBill } from './bills'
 
 const BAND_COLORS = {
   A: 'bg-emerald-500',
@@ -34,17 +37,31 @@ export default function App() {
   const [error, setError] = useState(null)
   const [certificateError, setCertificateError] = useState(null)
   const [hasSearched, setHasSearched] = useState(false)
+  const [billBreakdown, setBillBreakdown] = useState(null)
 
   function clearSelection() {
     setSelected(null)
     setCertificate(null)
     setCertificateError(null)
+    setBillBreakdown(null)
+  }
+
+  function handleQuestionnaireSubmit(factors) {
+    setBillBreakdown(
+      computeBill({
+        heatingCostCurrent: certificate.heating_cost_current?.value ?? 0,
+        hotWaterCostCurrent: certificate.hot_water_cost_current?.value ?? 0,
+        lightingCostCurrent: certificate.lighting_cost_current?.value ?? 0,
+        factors,
+      }),
+    )
   }
 
   async function handleSelect(property) {
     setSelected(property)
     setCertificate(null)
     setCertificateError(null)
+    setBillBreakdown(null)
     setCertificateLoading(true)
 
     try {
@@ -210,6 +227,19 @@ export default function App() {
         )}
 
         {certificate && <CertificateDetails certificate={certificate} />}
+
+        {certificate && <BillQuestionnaire onSubmit={handleQuestionnaireSubmit} />}
+
+        {billBreakdown && (
+          <BillEstimate
+            current={{
+              heating: certificate.heating_cost_current?.value ?? 0,
+              hotWater: certificate.hot_water_cost_current?.value ?? 0,
+              lighting: certificate.lighting_cost_current?.value ?? 0,
+            }}
+            breakdown={billBreakdown}
+          />
+        )}
       </div>
     </div>
   )
