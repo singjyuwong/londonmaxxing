@@ -1,70 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Sparkles } from "lucide-react";
+import { marked } from "marked";
 import { generateInsight } from "./api/insight";
 
-// Splits a line of text on **bold** markers and renders the bold spans as
-// <strong>, without pulling in a full markdown dependency.
-function InlineText({ text }) {
-  const parts = text.split(/\*\*(.+?)\*\*/g);
-  return parts.map((part, i) =>
-    i % 2 === 1 ? (
-      <strong key={i} className="font-semibold text-ink">
-        {part}
-      </strong>
-    ) : (
-      <span key={i}>{part}</span>
-    ),
-  );
-}
+marked.setOptions({ breaks: true });
 
-// Renders the LLM's markdown-ish response as headings / bullet lists /
-// paragraphs, with inline **bold** support, without a full markdown parser.
 function InsightContent({ text }) {
-  const blocks = text.trim().split(/\n{2,}/);
-
-  return (
-    <div className="space-y-3 text-sm text-slate-600 leading-relaxed">
-      {blocks.map((block, i) => {
-        const lines = block.split("\n").filter(Boolean);
-        const isList = lines.every(
-          (line) =>
-            /^[-*•]\s+/.test(line.trim()) || /^\d+[.)]\s+/.test(line.trim()),
-        );
-
-        if (isList) {
-          return (
-            <ul key={i} className="list-disc pl-5 space-y-1">
-              {lines.map((line, j) => (
-                <li key={j}>
-                  <InlineText
-                    text={line
-                      .trim()
-                      .replace(/^[-*•]\s+/, "")
-                      .replace(/^\d+[.)]\s+/, "")}
-                  />
-                </li>
-              ))}
-            </ul>
-          );
-        }
-
-        const headingMatch = block.trim().match(/^#{1,4}\s+(.*)$/);
-        if (headingMatch) {
-          return (
-            <div key={i} className="font-bold text-ink text-sm">
-              <InlineText text={headingMatch[1]} />
-            </div>
-          );
-        }
-
-        return (
-          <p key={i}>
-            <InlineText text={block} />
-          </p>
-        );
-      })}
-    </div>
-  );
+  const html = useMemo(() => marked.parse(text), [text]);
+  // eslint-disable-next-line react/no-danger
+  return <div className="insight-markdown" dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 export default function InsightBox({ certificate, billBreakdown, factors }) {
