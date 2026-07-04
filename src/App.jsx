@@ -297,7 +297,7 @@ export default function App() {
       <div className="py-6 px-24">
       <div className="app-shell">
         {screen === 'screen-1' && (
-          <section className="fade-in relative overflow-hidden">
+          <section className="fade-in relative overflow-x-hidden">
             {/* Background hero image, enlarged, sits behind the text */}
             <div
               className="absolute inset-0 bg-contain bg-right bg-no-repeat pointer-events-none -z-10"
