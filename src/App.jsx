@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { formatAddress, searchByPostcode } from './api/epc'
+import { fetchCertificate, formatAddress, searchByPostcode } from './api/epc'
+import CertificateDetails from './components/CertificateDetails'
 
 const BAND_COLORS = {
   A: 'bg-emerald-500',
@@ -27,9 +28,34 @@ export default function App() {
   const [postcode, setPostcode] = useState('')
   const [results, setResults] = useState([])
   const [selected, setSelected] = useState(null)
+  const [certificate, setCertificate] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [certificateLoading, setCertificateLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [certificateError, setCertificateError] = useState(null)
   const [hasSearched, setHasSearched] = useState(false)
+
+  function clearSelection() {
+    setSelected(null)
+    setCertificate(null)
+    setCertificateError(null)
+  }
+
+  async function handleSelect(property) {
+    setSelected(property)
+    setCertificate(null)
+    setCertificateError(null)
+    setCertificateLoading(true)
+
+    try {
+      const data = await fetchCertificate(property.certificateNumber)
+      setCertificate(data)
+    } catch (err) {
+      setCertificateError(err.message || 'Failed to load certificate data.')
+    } finally {
+      setCertificateLoading(false)
+    }
+  }
 
   async function handleSearch(event) {
     event.preventDefault()
@@ -42,7 +68,7 @@ export default function App() {
 
     setLoading(true)
     setError(null)
-    setSelected(null)
+    clearSelection()
     setHasSearched(true)
 
     try {
@@ -122,7 +148,7 @@ export default function App() {
               {selected && (
                 <button
                   type="button"
-                  onClick={() => setSelected(null)}
+                  onClick={clearSelection}
                   className="text-sm text-slate-400 hover:text-slate-200"
                 >
                   Clear selection
@@ -138,12 +164,13 @@ export default function App() {
                   <li key={property.certificateNumber}>
                     <button
                       type="button"
-                      onClick={() => setSelected(property)}
+                      onClick={() => handleSelect(property)}
+                      disabled={certificateLoading && isSelected}
                       className={`w-full rounded-xl border p-4 text-left transition ${
                         isSelected
                           ? 'border-emerald-500 bg-emerald-500/10 ring-1 ring-emerald-500/40'
                           : 'border-slate-800 bg-slate-900/40 hover:border-slate-600 hover:bg-slate-900/70'
-                      }`}
+                      } disabled:cursor-wait`}
                     >
                       <div className="flex items-start gap-4">
                         <EnergyBand band={property.currentEnergyEfficiencyBand} />
@@ -159,7 +186,10 @@ export default function App() {
                             {property.council ? ` · ${property.council}` : ''}
                           </p>
                         </div>
-                        {isSelected && (
+                        {isSelected && certificateLoading && (
+                          <span className="shrink-0 text-xs text-emerald-300">Loading…</span>
+                        )}
+                        {isSelected && !certificateLoading && certificate && (
                           <span className="shrink-0 rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-medium text-emerald-300">
                             Selected
                           </span>
@@ -173,17 +203,13 @@ export default function App() {
           </section>
         )}
 
-        {selected && (
-          <footer className="mt-8 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-6">
-            <p className="text-sm font-medium uppercase tracking-wide text-emerald-400">
-              Selected property
-            </p>
-            <p className="mt-2 text-lg font-semibold">{formatAddress(selected)}</p>
-            <p className="mt-1 font-mono text-sm text-slate-300">
-              Certificate: {selected.certificateNumber}
-            </p>
-          </footer>
+        {certificateError && (
+          <div className="mt-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-red-300">
+            {certificateError}
+          </div>
         )}
+
+        {certificate && <CertificateDetails certificate={certificate} />}
       </div>
     </div>
   )

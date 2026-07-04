@@ -1,14 +1,17 @@
-const EPC_SEARCH_URL = '/api/epc/domestic/search'
+const EPC_API_BASE = '/api/epc'
 
-export async function searchByPostcode(postcode) {
-  const params = new URLSearchParams({ postcode: postcode.trim() })
-  const response = await fetch(`${EPC_SEARCH_URL}?${params}`, {
+async function epcFetch(path, params = {}) {
+  const searchParams = new URLSearchParams(params)
+  const query = searchParams.toString()
+  const url = `${EPC_API_BASE}/${path}${query ? `?${query}` : ''}`
+
+  const response = await fetch(url, {
     headers: { Accept: 'application/json' },
   })
 
   if (!response.ok) {
     const text = await response.text()
-    let message = text || `Search failed (${response.status})`
+    let message = text || `Request failed (${response.status})`
 
     try {
       const body = JSON.parse(text)
@@ -20,8 +23,19 @@ export async function searchByPostcode(postcode) {
     throw new Error(message)
   }
 
-  const result = await response.json()
+  return response.json()
+}
+
+export async function searchByPostcode(postcode) {
+  const result = await epcFetch('domestic/search', { postcode: postcode.trim() })
   return result.data ?? []
+}
+
+export async function fetchCertificate(certificateNumber) {
+  const result = await epcFetch('certificate', {
+    certificate_number: certificateNumber,
+  })
+  return result.data ?? null
 }
 
 export function formatAddress(property) {
@@ -35,4 +49,22 @@ export function formatAddress(property) {
   ]
     .filter(Boolean)
     .join(', ')
+}
+
+export function formatCertificateAddress(certificate) {
+  return [
+    certificate.address_line_1,
+    certificate.address_line_2,
+    certificate.address_line_3,
+    certificate.address_line_4,
+    certificate.post_town,
+    certificate.postcode,
+  ]
+    .filter(Boolean)
+    .join(', ')
+}
+
+export function formatCurrency(value) {
+  if (!value?.value && value?.value !== 0) return '—'
+  return `£${value.value.toLocaleString('en-GB')}`
 }
