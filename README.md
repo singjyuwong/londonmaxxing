@@ -27,3 +27,11 @@ Open the app, enter a UK postcode (e.g. `SW19 7LE`), and choose a property from 
 npm run build
 npm run preview
 ```
+
+## Deploy
+
+Deploys the built site to Cloudflare Pages via Wrangler (run `npx wrangler login` once first):
+
+```bash
+npm run deploy
+```
