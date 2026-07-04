@@ -27,6 +27,30 @@ const SHOWER_TIERS = [
   { key: 'average', label: 'Average', range: '5–7 / week' },
   { key: 'frequent', label: 'Frequent', range: '7+ / week' },
 ];
+const RECENT_POSTCODES_KEY = 'recentPostcodes';
+const MAX_RECENT_POSTCODES = 5;
+
+function loadRecentPostcodes() {
+  try {
+    const raw = localStorage.getItem(RECENT_POSTCODES_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveRecentPostcode(postcode) {
+  try {
+    const existing = loadRecentPostcodes().filter((p) => p !== postcode);
+    const updated = [postcode, ...existing].slice(0, MAX_RECENT_POSTCODES);
+    localStorage.setItem(RECENT_POSTCODES_KEY, JSON.stringify(updated));
+    return updated;
+  } catch {
+    return loadRecentPostcodes();
+  }
+}
+
 const LOADING_MESSAGES = [
   'Fetching your energy certificate…',
   'Working out your personalized heating cost…',
@@ -67,6 +91,8 @@ export default function App() {
   const [addressLoading, setAddressLoading] = useState(false);
   const [addressError, setAddressError] = useState(null);
   const [selectedProperty, setSelectedProperty] = useState(null);
+  const [recentPostcodes, setRecentPostcodes] = useState(loadRecentPostcodes);
+  const [showPostcodeHistory, setShowPostcodeHistory] = useState(false);
   const [certificate, setCertificate] = useState(null);
   const [certificateLoading, setCertificateLoading] = useState(false);
   const [certificateError, setCertificateError] = useState(null);
@@ -121,6 +147,9 @@ export default function App() {
     setCertificate(null);
     setCertificateError(null);
     setCertificateLoading(true);
+
+    const trimmed = postcode.trim();
+    if (trimmed) setRecentPostcodes(saveRecentPostcode(trimmed));
 
     try {
       const data = await fetchCertificate(property.certificateNumber);
@@ -213,6 +242,8 @@ export default function App() {
                         setPostcode(e.target.value.toUpperCase());
                         setSelectedProperty(null);
                       }}
+                      onFocus={() => setShowPostcodeHistory(true)}
+                      onBlur={() => setTimeout(() => setShowPostcodeHistory(false), 150)}
                       className="w-full border-none rounded-xl px-2 py-3 text-slate-800 text-sm focus:outline-none"
                       autoComplete="postal-code"
                     />
@@ -223,6 +254,27 @@ export default function App() {
                   )}
                   {addressError && (
                     <p className="mt-2 text-xs text-red-500">{addressError}</p>
+                  )}
+
+                  {showPostcodeHistory && addressOptions.length === 0 && !selectedProperty && recentPostcodes.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-ink rounded-2xl p-2 shadow-xl z-20">
+                      <p className="text-xs text-slate-400 px-2 py-1">Recently searched</p>
+                      <div className="flex flex-col gap-1">
+                        {recentPostcodes.map((p) => (
+                          <button
+                            key={p}
+                            onClick={() => {
+                              setPostcode(p);
+                              setSelectedProperty(null);
+                              setShowPostcodeHistory(false);
+                            }}
+                            className="text-left px-3 py-2.5 rounded-xl text-sm font-medium transition hover:bg-slate-100"
+                          >
+                            {p}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   )}
 
                   {addressOptions.length > 0 && !selectedProperty && (
