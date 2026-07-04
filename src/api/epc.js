@@ -15,7 +15,11 @@ async function epcFetch(path, params = {}) {
 
     try {
       const body = JSON.parse(text)
-      message = body.error ?? body.message ?? message
+      const raw = body.error ?? body.message ?? message
+      message =
+        typeof raw === 'string'
+          ? raw
+          : (raw?.message ?? JSON.stringify(raw))
     } catch {
       // keep text response
     }
