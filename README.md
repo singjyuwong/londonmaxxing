@@ -36,3 +36,4 @@ Deploys the `dist` folder to Cloudflare Pages via Wrangler (run `npx wrangler lo
 npm run deploy
 ```
 
+
