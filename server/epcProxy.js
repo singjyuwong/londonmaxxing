@@ -9,7 +9,8 @@ const PLACEHOLDER_TOKENS = new Set([
 
 export function getBearerToken(mode = 'development') {
   const env = loadEnv(mode, process.cwd(), '')
-  const envToken = env.EPC_BEARER_TOKEN?.trim()
+  const envToken =
+    env.EPC_BEARER_TOKEN?.trim() || env.VITE_EPC_BEARER_TOKEN?.trim()
 
   if (envToken && !PLACEHOLDER_TOKENS.has(envToken)) {
     return envToken
