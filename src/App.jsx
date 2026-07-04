@@ -417,19 +417,7 @@ export default function App() {
                         </>
                       )}
                     </button>
-                    <button
-                      onClick={() =>
-                        poweredByRef.current?.scrollIntoView({
-                          behavior: "smooth",
-                          block: "center",
-                        })
-                      }
-                      className="font-semibold px-8 py-3.5 rounded-full border-2 border-ink text-ink hover:bg-ink hover:text-white transition inline-flex items-center gap-2 w-max"
-                    >
-                      See How It Works
-                    </button>
                   </div>
-                  <div ref={poweredByRef} />
                 </div>
 
                 {/* RIGHT: spacer, image lives in the section background */}
