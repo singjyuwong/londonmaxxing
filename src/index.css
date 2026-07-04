@@ -1,31 +1,56 @@
 @import "tailwindcss";
 
-html { min-height: 100%; }
+html {
+    min-height: 100%;
+}
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  margin: 0;
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #FCF5ED 0%, #ffffff 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #fcf5ed 0%, #ffffff 100%);
 }
 
 .top-nav {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #FCF5ED;
-  padding: 16px 24px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fcf5ed;
+    padding: 16px 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
-.top-nav-brand { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; color: #111111; }
+.top-nav-brand {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #111111;
+}
 
-.fade-in { animation: fadeIn .4s ease; }
-@keyframes fadeIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform: translateY(0);} }
-.progress-bar-inner { transition: width .6s ease; }
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.fade-in {
+    animation: fadeIn 0.4s ease;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.progress-bar-inner {
+    transition: width 0.6s ease;
+}
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
 
 /* Brand accent colors — used sparingly, per design direction */
 .text-orange-accent { color: #FD4604; }
@@ -46,9 +71,155 @@ body {
 input[type="range"] { -webkit-appearance: none; height: 6px; border-radius: 3px; background: #FFE0D1; }
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #FD4604; cursor: pointer; border: 3px solid white; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
 
-#terrace-wrap { touch-action: none; }
-#terrace-canvas { width: 100%; height: 100%; display: block; cursor: pointer; }
-.terrace-tooltip { position:absolute; max-width:210px; background:#fff; border:2px solid #111; border-radius:14px; padding:10px 14px; font-size:12px; pointer-events:none; box-shadow:0 8px 24px rgba(0,0,0,.18); z-index:20; opacity:0; transform: translate(-50%, calc(-100% - 6px)) scale(0.9); transition: opacity .2s ease, transform .2s ease; }
-.terrace-tooltip.visible { opacity:1; transform: translate(-50%, calc(-100% - 16px)) scale(1); }
-.terrace-tooltip-label { font-weight:800; color:#FD4604; font-size:11px; letter-spacing:.03em; margin-bottom:3px; text-transform:uppercase; }
-.terrace-tooltip-desc { color:#111; line-height:1.4; }
+.pill-dark {
+    background: #111111;
+    color: #fff;
+    border-radius: 999px;
+}
+.highlight-pill {
+    background: #fd4604;
+    color: #fff;
+    border-radius: 999px;
+    padding: 2px 18px;
+    display: inline-block;
+}
+.app-shell {
+    background: transparent;
+}
+.tag-pill {
+    background: #111111;
+    color: #fff;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 6px 14px;
+    display: inline-block;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: #ffe0d1;
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fd4604;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.insight-markdown {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #475569;
+}
+.insight-markdown > *:first-child {
+    margin-top: 0;
+}
+.insight-markdown > *:last-child {
+    margin-bottom: 0;
+}
+.insight-markdown h1,
+.insight-markdown h2,
+.insight-markdown h3,
+.insight-markdown h4 {
+    color: #111111;
+    font-weight: 800;
+    margin: 1em 0 0.4em;
+    line-height: 1.3;
+}
+.insight-markdown h1 {
+    font-size: 1.1rem;
+}
+.insight-markdown h2 {
+    font-size: 1.05rem;
+}
+.insight-markdown h3,
+.insight-markdown h4 {
+    font-size: 0.95rem;
+}
+.insight-markdown p {
+    margin: 0 0 0.75em;
+}
+.insight-markdown strong {
+    color: #111111;
+    font-weight: 700;
+}
+.insight-markdown ul,
+.insight-markdown ol {
+    margin: 0 0 0.75em;
+    padding-left: 1.25em;
+}
+.insight-markdown ul {
+    list-style: disc;
+}
+.insight-markdown ol {
+    list-style: decimal;
+}
+.insight-markdown li {
+    margin: 0.25em 0;
+}
+.insight-markdown li > p {
+    margin: 0;
+}
+.insight-markdown code {
+    background: #eef2f7;
+    border-radius: 4px;
+    padding: 0.1em 0.35em;
+    font-size: 0.85em;
+}
+.insight-markdown blockquote {
+    border-left: 3px solid #fd4604;
+    margin: 0 0 0.75em;
+    padding-left: 0.75em;
+    color: #64748b;
+}
+
+#terrace-wrap {
+    touch-action: none;
+}
+#terrace-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: pointer;
+}
+.terrace-tooltip {
+    position: absolute;
+    max-width: 210px;
+    background: #fff;
+    border: 2px solid #111;
+    border-radius: 14px;
+    padding: 10px 14px;
+    font-size: 12px;
+    pointer-events: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    z-index: 20;
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 6px)) scale(0.9);
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+.terrace-tooltip.visible {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% - 16px)) scale(1);
+}
+.terrace-tooltip-label {
+    font-weight: 800;
+    color: #fd4604;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+}
+.terrace-tooltip-desc {
+    color: #111;
+    line-height: 1.4;
+}
