@@ -67,6 +67,7 @@ export function insightApiProxyPlugin(mode = 'development') {
             },
             body: JSON.stringify({
               model: MODEL,
+              reasoning: { effort: 'low' },
               messages: [
                 { role: 'system', content: SYSTEM_PROMPT },
                 { role: 'user', content: prompt },

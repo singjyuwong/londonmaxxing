@@ -40,6 +40,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: MODEL,
+        reasoning: { effort: 'low' },
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: prompt },
