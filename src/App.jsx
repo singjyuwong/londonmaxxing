@@ -297,12 +297,14 @@ export default function App() {
       <div className="py-6 px-24">
       <div className="app-shell">
         {screen === 'screen-1' && (
-          <section className="fade-in relative overflow-x-hidden">
+          <section className="fade-in relative">
             {/* Background hero image, enlarged, sits behind the text */}
-            <div
-              className="absolute inset-0 bg-contain bg-right bg-no-repeat pointer-events-none -z-10"
-              style={{ backgroundImage: 'url(/hero-building.png)', transform: 'scale(1.08)' }}
-            />
+            <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+              <div
+                className="absolute inset-0 bg-contain bg-right bg-no-repeat"
+                style={{ backgroundImage: 'url(/hero-building.png)', transform: 'scale(1.08)' }}
+              />
+            </div>
             <div className="grid md:grid-cols-2">
               {/* LEFT */}
               <div className="p-10 md:p-14 flex flex-col justify-center min-h-[75vh] translate-y-[20%]">
