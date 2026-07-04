@@ -13,6 +13,10 @@ Add your bearer token to `.bearer-token` (one line, no quotes). The dev server p
 
 Alternatively, set `EPC_BEARER_TOKEN` in a `.env` file.   
 
+To use the "Generate insight" feature (AI summary comparing your EPC data with your
+personalized bill estimate, powered by Claude Sonnet 5 via OpenRouter), also set
+`OPENROUTER_API_KEY` in your `.env` file. Get a key at https://openrouter.ai/keys.
+
 ## Development
 
 ```bash
@@ -33,11 +37,11 @@ npm run preview
 ### Vercel
 
 1. Import the repo in [Vercel](https://vercel.com).
-2. Add an environment variable:
-   - **Name:** `EPC_BEARER_TOKEN`
-   - **Value:** your bearer token
+2. Add environment variables:
+   - **Name:** `EPC_BEARER_TOKEN` — **Value:** your EPC bearer token
+   - **Name:** `OPENROUTER_API_KEY` — **Value:** your OpenRouter API key (for the "Generate insight" feature)
    - **Environments:** Production, Preview, Development
-3. Deploy. The app calls `/api/epc/...`, which is handled by `api/epc/[...path].js` and adds the token server-side.
+3. Deploy. The app calls `/api/epc/...` (handled by `api/epc/[...path].js`) and `/api/insight` (handled by `api/insight.js`), both of which add the relevant secret server-side.
 
 For a demo where you do not mind the token being visible in the client bundle, you can use `VITE_EPC_BEARER_TOKEN` instead — the API route accepts either variable.
 
