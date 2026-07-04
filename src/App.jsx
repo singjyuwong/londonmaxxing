@@ -135,7 +135,6 @@ export default function App() {
   const [billBreakdown, setBillBreakdown] = useState(null);
   const [billFactors, setBillFactors] = useState(null);
   const analysisTimer = useRef(null);
-  const poweredByRef = useRef(null);
 
   useEffect(() => {
     const trimmed = postcode.trim();
