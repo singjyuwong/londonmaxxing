@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { Thermometer, ArrowRight, ChevronLeft, Wallet, Receipt, Flame, Droplet, Lightbulb, Leaf, MapPin } from 'lucide-react';
-import TerraceRow from './TerraceRow.jsx';
 import { fetchCertificate, formatAddress, formatCertificateAddress, formatCurrency, searchByPostcode } from './api/epc';
 import { computeBill } from './bills';
 
@@ -221,10 +220,15 @@ export default function App() {
       <nav className="top-nav">
         <span className="top-nav-brand">calrion</span>
       </nav>
-      <div className="max-w-6xl mx-auto py-6 px-4">
+      <div className="py-6 px-24">
       <div className="app-shell">
         {screen === 'screen-1' && (
-          <section className="fade-in">
+          <section className="fade-in relative overflow-hidden">
+            {/* Background hero image, enlarged 20%, sits behind the text */}
+            <div
+              className="absolute inset-0 bg-contain bg-right bg-no-repeat pointer-events-none -z-10"
+              style={{ backgroundImage: 'url(/hero-building.png)', transform: 'scale(1.08)' }}
+            />
             <div className="grid md:grid-cols-2">
               {/* LEFT */}
               <div className="p-10 md:p-14 flex flex-col justify-center min-h-[75vh] translate-y-[20%]">
@@ -333,26 +337,26 @@ export default function App() {
                 <div ref={poweredByRef} />
               </div>
 
-              {/* RIGHT: interactive building preview */}
-              <div className="pl-10 md:pl-14 pt-10 md:pt-14 pr-0 flex flex-col justify-between overflow-hidden">
-                <div>
-                  <TerraceRow />
-                </div>
-              </div>
+              {/* RIGHT: spacer, image now lives in the section background */}
+              <div className="min-h-[75vh]" />
             </div>
           </section>
         )}
 
         {screen === 'screen-2' && certificate && (
           <section className="fade-in">
-            <div className="max-w-2xl mx-auto px-6 py-10">
+            <div className="py-10">
               <button onClick={() => setScreen('screen-1')} className="text-slate-400 text-sm flex items-center gap-1 mb-4 hover:text-slate-600">
                 <ChevronLeft className="w-4 h-4" />Back
               </button>
+
+              <div className="grid md:grid-cols-2 gap-[60px] items-start">
+              {/* LEFT: certificate summary + CTA */}
+              <div>
               <h2 className="text-2xl font-black text-ink tracking-tight mb-1">HERE'S WHAT WE FOUND</h2>
               <p className="text-slate-500 text-sm mb-6">Auto-fetched from the EPC Register</p>
 
-              <div className="border-2 border-ink rounded-2xl p-5 mb-6">
+              <div className="border-2 border-[#3D2418] rounded-2xl p-5 mb-6 bg-[#FDF8F2]">
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <div className="font-bold text-ink">{formatCertificateAddress(certificate)}</div>
@@ -377,7 +381,7 @@ export default function App() {
 
                 <div className="grid grid-cols-4 gap-3 text-sm mb-4">
                   {costs.map((c) => (
-                    <div key={c.key} className="bg-slate-50 rounded-lg p-3">
+                    <div key={c.key} className="border border-[#FD4604]/40 rounded-lg p-3">
                       <div className="text-slate-400 text-xs mb-1 flex items-center gap-1"><c.icon className="w-3 h-3" />{c.label}</div>
                       <div className="font-medium">{formatCurrency(c.current)}</div>
                       <div className="text-[10px] text-slate-400 mt-0.5">
@@ -385,7 +389,7 @@ export default function App() {
                       </div>
                     </div>
                   ))}
-                  <div className="bg-slate-50 rounded-lg p-3">
+                  <div className="border border-[#FD4604]/40 rounded-lg p-3">
                     <div className="text-slate-400 text-xs mb-1 flex items-center gap-1"><Leaf className="w-3 h-3" />CO₂ Emissions</div>
                     <div className="font-medium">
                       {certificate.co2_emissions_current?.value != null
@@ -398,7 +402,7 @@ export default function App() {
                 {fabric.length > 0 && (
                   <div className="grid grid-cols-2 gap-3 text-sm mb-4">
                     {fabric.map((f, i) => (
-                      <div key={`${f.label}-${i}`} className="bg-slate-50 rounded-lg p-3">
+                      <div key={`${f.label}-${i}`} className="border border-slate-200 rounded-lg p-3">
                         <div className="text-slate-400 text-xs mb-1">{f.label}</div>
                         <div className="font-medium">{f.value}</div>
                       </div>
@@ -437,12 +441,19 @@ export default function App() {
                 )}
               </div>
 
+              <button onClick={startAnalysis} className="pill-dark font-semibold px-10 py-3.5 hover:opacity-90 transition">
+                See My Estimate
+              </button>
+              </div>
+
+              {/* RIGHT: questions list */}
+              <div>
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-1.5 h-5 bg-orange-accent rounded-full" />
                 <h3 className="font-bold text-sm text-ink">Q1 · HOW MANY PEOPLE LIVE HERE?</h3>
                 <span className="text-[10px] font-semibold text-orange-accent">REQUIRED</span>
               </div>
-              <div className="bg-white border-2 border-slate-100 rounded-2xl p-5 mb-6">
+              <div className="border-2 border-[#3D2418] rounded-2xl p-5 mb-6 bg-[#FDF8F2]">
                 <input
                   type="number"
                   min="1"
@@ -459,7 +470,7 @@ export default function App() {
                 <h3 className="font-bold text-sm text-ink">Q2 · WHERE ARE YOU ON WEEKDAYS?</h3>
                 <span className="text-[10px] font-semibold text-slate-400">OPTIONAL</span>
               </div>
-              <div className="bg-white border-2 border-slate-100 rounded-2xl p-5 mb-6">
+              <div className="border-2 border-[#3D2418] rounded-2xl p-5 mb-6 bg-[#FDF8F2]">
                 <div className="grid grid-cols-3 gap-2">
                   {WEEKDAY_OPTIONS.map((o) => (
                     <button
@@ -482,7 +493,7 @@ export default function App() {
                 <h3 className="font-bold text-sm text-ink">Q3 · GAS / ELECTRICITY FOR HEATING?</h3>
                 <span className="text-[10px] font-semibold text-orange-accent">REQUIRED</span>
               </div>
-              <div className="bg-white border-2 border-slate-100 rounded-2xl p-5 mb-6">
+              <div className="border-2 border-[#3D2418] rounded-2xl p-5 mb-6 bg-[#FDF8F2]">
                 <div className="grid grid-cols-2 gap-2">
                   {HEATING_FUEL_OPTIONS.map((o) => (
                     <button
@@ -505,7 +516,7 @@ export default function App() {
                 <h3 className="font-bold text-sm text-ink">Q4 · WHAT'S YOUR COMFORTABLE TEMPERATURE?</h3>
                 <span className="text-[10px] font-semibold text-orange-accent">REQUIRED</span>
               </div>
-              <div className="bg-white border-2 border-slate-100 rounded-2xl p-5 mb-6">
+              <div className="border-2 border-[#3D2418] rounded-2xl p-5 mb-6 bg-[#FDF8F2]">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs text-slate-400">16°C</span>
                   <span className="text-2xl font-black text-orange-accent">
@@ -536,7 +547,7 @@ export default function App() {
                 <h3 className="font-bold text-sm text-ink">Q5 · DO YOU HEAT THE WHOLE HOME OR JUST THE ROOMS YOU USE?</h3>
                 <span className="text-[10px] font-semibold text-slate-400">OPTIONAL</span>
               </div>
-              <div className="bg-white border-2 border-slate-100 rounded-2xl p-5 mb-6">
+              <div className="border-2 border-[#3D2418] rounded-2xl p-5 mb-6 bg-[#FDF8F2]">
                 <div className="grid grid-cols-2 gap-2">
                   {HEATING_SCOPE_OPTIONS.map((o) => (
                     <button
@@ -559,7 +570,7 @@ export default function App() {
                 <h3 className="font-bold text-sm text-ink">Q6 · HOW MANY DAYS A WEEK DO YOU SHOWER AT HOME?</h3>
                 <span className="text-[10px] font-semibold text-slate-400">OPTIONAL</span>
               </div>
-              <div className="bg-white border-2 border-slate-100 rounded-2xl p-5 mb-6">
+              <div className="border-2 border-[#3D2418] rounded-2xl p-5 mb-6 bg-[#FDF8F2]">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs text-slate-400">0</span>
                   <span className="text-2xl font-black text-orange-accent">
@@ -584,17 +595,15 @@ export default function App() {
                 </div>
                 <p className="text-xs text-slate-400 mt-3">Hot water use affects your total annual bills estimate.</p>
               </div>
-
-              <button onClick={startAnalysis} className="w-full pill-dark font-semibold py-3.5 hover:opacity-90 transition">
-                See My Estimate
-              </button>
+              </div>
+              </div>
             </div>
           </section>
         )}
 
         {screen === 'screen-3' && (
           <section className="fade-in">
-            <div className="max-w-md mx-auto px-6 pt-10 pb-32 text-center">
+            <div className="pt-10 pb-32 text-center">
               <button onClick={backToQuestions} className="text-slate-400 text-sm flex items-center gap-1 mb-16 hover:text-slate-600">
                 <ChevronLeft className="w-4 h-4" />Back
               </button>
@@ -613,7 +622,7 @@ export default function App() {
 
         {screen === 'screen-4' && certificate && billBreakdown && (
           <section className="fade-in">
-            <div className="max-w-2xl mx-auto px-6 py-10">
+            <div className="py-10">
               <button onClick={backToQuestions} className="text-slate-400 text-sm flex items-center gap-1 mb-4 hover:text-slate-600">
                 <ChevronLeft className="w-4 h-4" />Back
               </button>
@@ -627,36 +636,42 @@ export default function App() {
               </div>
               <p className="text-slate-400 text-xs mb-6">Based on your EPC certificate, personalized using your answers above.</p>
 
-              <h3 className="font-bold text-ink mb-3 flex items-center gap-2"><Thermometer className="w-4 h-4 text-orange-accent" />YOUR COMFORT SETTINGS</h3>
-              <div className="border-2 border-ink rounded-2xl p-5 mb-8">
-                <div className="text-sm text-slate-600">
-                  Keeping this home at your comfortable <span className="font-bold text-ink">{TEMP_TIERS[tempTier].label.toLowerCase()}</span> temperature{' '}
-                  (<span className="font-bold text-ink">{TEMP_TIERS[tempTier].range}</span>), heating{' '}
-                  <span className="font-bold text-ink">{heatingScope === 'rooms' ? 'just the rooms you use' : 'the whole home'}</span>, factors into the estimate below.
-                </div>
-              </div>
-
-              <h3 className="font-bold text-ink mb-3 flex items-center gap-2"><Wallet className="w-4 h-4 text-orange-accent" />PERSONALIZED BILL BREAKDOWN</h3>
-              <div className="border-2 border-slate-100 rounded-2xl p-5 mb-6 space-y-2">
-                {[
-                  { label: 'Heating', current: certificate.heating_cost_current?.value ?? 0, estimated: billBreakdown.heating },
-                  { label: 'Hot water', current: certificate.hot_water_cost_current?.value ?? 0, estimated: billBreakdown.hotWater },
-                  { label: 'Lighting', current: certificate.lighting_cost_current?.value ?? 0, estimated: billBreakdown.lighting },
-                ].map((row) => (
-                  <div key={row.label} className="flex items-center justify-between bg-slate-50 rounded-lg px-4 py-3">
-                    <span className="text-sm text-slate-600">{row.label}</span>
-                    <span className="text-sm text-slate-400">
-                      £{row.current.toLocaleString('en-GB')} <span className="mx-1">→</span>
-                      <span className="font-semibold text-ink">£{Math.round(row.estimated).toLocaleString('en-GB')}</span>
-                    </span>
+              <div className="grid md:grid-cols-5 gap-10 items-start">
+                <div className="md:col-span-3">
+                  <h3 className="font-bold text-ink mb-3 flex items-center gap-2"><Thermometer className="w-4 h-4 text-orange-accent" />YOUR COMFORT SETTINGS</h3>
+                  <div className="border-2 border-[#3D2418] rounded-2xl p-5 mb-8 bg-[#FDF8F2]">
+                    <div className="text-sm text-slate-600">
+                      Keeping this home at your comfortable <span className="font-bold text-ink">{TEMP_TIERS[tempTier].label.toLowerCase()}</span> temperature{' '}
+                      (<span className="font-bold text-ink">{TEMP_TIERS[tempTier].range}</span>), heating{' '}
+                      <span className="font-bold text-ink">{heatingScope === 'rooms' ? 'just the rooms you use' : 'the whole home'}</span>, factors into the estimate below.
+                    </div>
                   </div>
-                ))}
-              </div>
 
-              <h3 className="font-bold text-ink mb-3 flex items-center gap-2"><Receipt className="w-4 h-4 text-orange-accent" />TOTAL ANNUAL BILLS ESTIMATE</h3>
-              <div className="bg-slate-50 rounded-2xl p-5">
-                <div className="text-3xl font-black text-ink">£{Math.round(billBreakdown.total).toLocaleString('en-GB')}</div>
-                <div className="text-xs text-slate-400 mt-1">Personalized to how you actually use this home</div>
+                  <h3 className="font-bold text-ink mb-3 flex items-center gap-2"><Wallet className="w-4 h-4 text-orange-accent" />PERSONALIZED BILL BREAKDOWN</h3>
+                  <div className="border-2 border-[#3D2418] rounded-2xl p-5 mb-6 bg-[#FDF8F2] space-y-2">
+                    {[
+                      { label: 'Heating', current: certificate.heating_cost_current?.value ?? 0, estimated: billBreakdown.heating },
+                      { label: 'Hot water', current: certificate.hot_water_cost_current?.value ?? 0, estimated: billBreakdown.hotWater },
+                      { label: 'Lighting', current: certificate.lighting_cost_current?.value ?? 0, estimated: billBreakdown.lighting },
+                    ].map((row) => (
+                      <div key={row.label} className="flex items-center justify-between border border-slate-200 rounded-lg px-4 py-3">
+                        <span className="text-sm text-slate-600">{row.label}</span>
+                        <span className="text-sm text-slate-400">
+                          £{row.current.toLocaleString('en-GB')} <span className="mx-1">→</span>
+                          <span className="font-semibold text-ink">£{Math.round(row.estimated).toLocaleString('en-GB')}</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="md:col-span-2">
+                  <h3 className="font-bold text-ink mb-3 flex items-center gap-2"><Receipt className="w-4 h-4 text-orange-accent" />TOTAL ANNUAL BILLS ESTIMATE</h3>
+                  <div className="border-2 border-[#3D2418] rounded-2xl p-5 bg-[#FDF8F2]">
+                    <div className="text-3xl font-black text-ink">£{Math.round(billBreakdown.total).toLocaleString('en-GB')}</div>
+                    <div className="text-xs text-slate-400 mt-1">Personalized to how you actually use this home</div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
