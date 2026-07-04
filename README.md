@@ -11,7 +11,7 @@ cp .bearer-token.example .bearer-token
 
 Add your bearer token to `.bearer-token` (one line, no quotes). The dev server proxy reads this file so the token is not exposed in the browser.
 
-Alternatively, set `EPC_BEARER_TOKEN` in a `.env` file.  
+Alternatively, set `EPC_BEARER_TOKEN` in a `.env` file.   
 
 ## Development
 
